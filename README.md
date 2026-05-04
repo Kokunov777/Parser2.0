@@ -36,20 +36,30 @@
 
 
 ## Разработка грамматики
+
 G[Z] = { V_T, V_N, Z, P}
+
 z = "let" <let>
+
 <let> -> lettev <id>
+
 <id> -> lettev <id>
+
 digit <id> | '_' <id> '=' <Eqaul>
+
 <Equal> -> 'num::complex::Complex::hew' <OPEN>
+
 <OPEN> -> '(' <NUMB>
+
 <NUMB> -> '3.1' <digit>
+
 <digit> ->',' <digit>
+
 <digit> ->  '-4.2' <OPEN>
+
 <OPEN> -> ')' <END>
+
 <END> -> ';'
-
-
 ## терминальные символы символ (V_T)
 V_T = {let,  =,  num, ::, new, (, 3.1, -4.2, ), ;,)
 

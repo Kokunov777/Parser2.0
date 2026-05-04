@@ -36,31 +36,25 @@
 
 
 ## Разработка грамматики
-формальные определение грамматики 
-
-Z      → "let" ID "=" PATH "::" "new" "(" ARGS ")" ";"
-
-PATH   → ID ("::" ID)*
-
-ARGS   → NUM "," NUM
-
-NUM    → ["-"] DIGITS ["." DIGITS]
-
-ID     → LETTER (LETTER | DIGIT | "_")*
-
-DIGITS → DIGIT+
-
-LETTER → "a".."z" | "A".."Z" | "_"
-
-DIGIT  → "0".."9"
+G[Z] = { V_T, V_N, Z, P}
+z = "let" <let>
+<let> -> lettev <id>
+<id> -> lettev <id>
+digit <id> | '_' <id> '=' <Eqaul>
+<Equal> -> 'num::complex::Complex::hew' <OPEN>
+<OPEN> -> '(' <NUMB>
+<NUMB> -> '3.1' <digit>
+<digit> ->',' <digit>
+<digit> ->  '-4.2' <OPEN>
+<OPEN> -> ')' <END>
+<END> -> ';'
 
 
-## Терминалы (VT)
-<img width="580" height="458" alt="image" src="https://github.com/user-attachments/assets/d95295ed-e5a5-44d0-a0bf-f274ffe8e4f0" />
+## терминальные символы символ (V_T)
+V_T = {let,  =,  num, ::, new, (, 3.1, -4.2, ), ;,)
 
-## Нетерминалы (VN)
-<img width="566" height="380" alt="image" src="https://github.com/user-attachments/assets/ad129ef2-d134-4382-bc8a-3142ce9d7b48" />
-
+## нетерминальный символ (V_N)
+VN = {complex_num2, complex, Complex, }
 
 # Классификация грамматики (по Хомскому)
 Тип 2 — Контекстно-свободная грамматика (КС-грамматика)

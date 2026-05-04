@@ -1,4 +1,4 @@
-('c:\\Master_Bear\\3_kyrs\\6_semestr\\teor_formal_az_kommpilitorov\\new_parser\\build\\Языковой '
+('C:\\Master_Bear\\3_kyrs\\6_semestr\\teor_formal_az_kommpilitorov\\new_parser\\build\\Языковой '
  'процессор\\PYZ-00.pyz',
  [('PyQt6',
    'C:\\Users\\name\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PyQt6\\__init__.py',
@@ -223,7 +223,7 @@
    'C:\\Users\\name\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\ipaddress.py',
    'PYMODULE'),
   ('lexical_analyzer',
-   'c:\\Master_Bear\\3_kyrs\\6_semestr\\teor_formal_az_kommpilitorov\\new_parser\\lexical_analyzer.py',
+   'C:\\Master_Bear\\3_kyrs\\6_semestr\\teor_formal_az_kommpilitorov\\new_parser\\lexical_analyzer.py',
    'PYMODULE'),
   ('logging',
    'C:\\Users\\name\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py',
@@ -283,7 +283,7 @@
    'C:\\Users\\name\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\subprocess.py',
    'PYMODULE'),
   ('syntax_analyzer',
-   'c:\\Master_Bear\\3_kyrs\\6_semestr\\teor_formal_az_kommpilitorov\\new_parser\\syntax_analyzer.py',
+   'C:\\Master_Bear\\3_kyrs\\6_semestr\\teor_formal_az_kommpilitorov\\new_parser\\syntax_analyzer.py',
    'PYMODULE'),
   ('tarfile',
    'C:\\Users\\name\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\tarfile.py',

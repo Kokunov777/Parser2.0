@@ -45,7 +45,7 @@ z = "let" <let>
 
 <id> -> lettev <id>
 
-digit <id> | '_' <id> '=' <Eqaul>
+<digit><id> | '_' <id> '=' <Eqaul>
 
 <Equal> -> 'num::complex::Complex::hew' <OPEN>
 

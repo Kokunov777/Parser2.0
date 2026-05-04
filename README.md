@@ -39,27 +39,27 @@
 
 G[Z] = { V_T, V_N, Z, P}
 
-z = "let" <let>
+z = "let" let
 
-<let> -> lettev <id>
+let -> lettev id
 
-<id> -> lettev <id>
+id -> lettev id
 
-<digit><id> | '_' <id> '=' <Eqaul>
+digit id -> | '_' id '=' Eqaul
 
-<Equal> -> 'num::complex::Complex::hew' <OPEN>
+Equal -> 'num::complex::Complex::hew' OPEN
 
-<OPEN> -> '(' <NUMB>
+OPEN -> '(' NUMB
 
-<NUMB> -> '3.1' <digit>
+NUMB -> '3.1' digit
 
-<digit> ->',' <digit>
+digit ->',' digit
 
-<digit> ->  '-4.2' <OPEN>
+digit ->  '-4.2' OPEN
 
-<OPEN> -> ')' <END>
+OPEN -> ')' END
 
-<END> -> ';'
+END -> ';'
 ## терминальные символы символ (V_T)
 V_T = {let,  =,  num, ::, new, (, 3.1, -4.2, ), ;,)
 

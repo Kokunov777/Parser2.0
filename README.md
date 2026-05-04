@@ -37,6 +37,7 @@
 
 ## Разработка грамматики
 формальные определение грамматики 
+
 Z      → "let" ID "=" PATH "::" "new" "(" ARGS ")" ";"
 
 PATH   → ID ("::" ID)*
@@ -54,93 +55,75 @@ LETTER → "a".."z" | "A".."Z" | "_"
 DIGIT  → "0".."9"
 
 
-Терминалы (VT)
-`V_T = { let, =, ;, ::, ,, (, ), -, num, complex, Complex, new, INTEGER, FLOAT }`
+##Терминалы (VT)
+<img width="580" height="458" alt="image" src="https://github.com/user-attachments/assets/d95295ed-e5a5-44d0-a0bf-f274ffe8e4f0" />
 
-Нетерминалы (V<sub>N</sub>)
-`V_N = { <program>, <statement>, <let_statement>, <var_ident>, 
-        <complex_creation>, <path_expr>, <path_segment>, 
-        <call_expr>, <arg_list>, <arg>, <float_literal> }`
-        
-Начальный символ (Z)
-`Z = <program>`
+##Нетерминалы (VN)
+<img width="566" height="380" alt="image" src="https://github.com/user-attachments/assets/ad129ef2-d134-4382-bc8a-3142ce9d7b48" />
 
-1.  <program>        → <statement> | <statement> <program>
-2.  <statement>      → <let_statement> ';'
-3.  <let_statement>  → 'let' <var_ident> '=' <complex_creation>
-4.  <var_ident>      → IDENT
-5.  <complex_creation> → <path_expr> <call_expr>
-6.  <path_expr>      → <path_segment> { '::' <path_segment> }
-7.  <path_segment>   → 'num' | 'complex' | 'Complex' | 'new'
-8.  <call_expr>      → '(' <arg_list> ')'
-9.  <arg_list>       → <arg> { ',' <arg> }
-10. <arg>            → <float_literal>
-11. <float_literal>  → [ '-' ] FLOAT_LIT
 
 # Классификация грамматики (по Хомскому)
-Грамматика G[Z] является контекстно-свободной (КС, тип 2 по Хомскому).
+Тип 2 — Контекстно-свободная грамматика (КС-грамматика)
 
-Обоснование:
-Все правила имеют вид A → α, где A ∈ VN, α ∈ V*
+Все правила имеют форму A → α, где:
 
-Нет правил вида αAβ → αγβ (характерных для КЗ-грамматик)
+A — один нетерминальный символ
 
-Есть рекурсивные правила для обработки списков
+α — цепочка из терминалов и нетерминалов (может быть пустой)
 
-Грамматика не является регулярной (тип 3) из-за наличия вложенных скобок
-
-Подкласс: LL(1)
-Нет левой рекурсии
-
-FIRST-множества альтернатив не пересекаются
-
-# Возможно построение анализатора методом рекурсивного спуска
- parse_program() → while lookahead != EOF: parse_statement()
-                       │
-                       ▼
-parse_statement() → parse_let_statement(); match(SEMICOLON)
-                       │
-                       ▼
-parse_let_statement() → match(KW_LET); parse_var_ident(); 
-                        match(ASSIGN); parse_complex_creation()
-                       │
-                       ▼
-parse_complex_creation() → parse_path_expr(); parse_call_expr()
-                       │
-                       ▼
-parse_path_expr() → parse_path_segment(); while PATH_SEP: 
-                    match(PATH_SEP); parse_path_segment()
-                       │
-                       ▼
-parse_call_expr() → match(LPAREN); parse_arg_list(); match(RPAREN)
-                       │
-                       ▼
-parse_arg_list() → parse_arg(); while COMMA: 
-                   match(COMMA); parse_arg()
+#метод анализа
+##Алгоритм синтаксического анализа
+<img width="164" height="1121" alt="Диаграмма без названия drawio (5)" src="https://github.com/user-attachments/assets/39341fa7-136a-4d17-8cc0-02c9511cd556" />
 
 # Диагностика и нейтрализация синтаксических ошибок.
-Типы диагностируемых ошибок
-| № | Тип ошибки                    | Сообщение                                  |
-|----|-------------------------------|--------------------------------------------|
-| 1  | Отсутствует let               | "Ожидается 'let'"                          |
-| 2  | Отсутствует идентификатор     | "Ожидается идентификатор переменной"       |
-| 3  | Отсутствует =                 | "Ожидается '='"                            |
-| 4  | Неверный разделитель пути     | "Ожидается '::'"                           |
-| 5  | Неверный сегмент пути         | "Ожидается 'num', 'complex', 'Complex' или 'new'" |
-| 6  | Отсутствует (                 | "Ожидается '('"                            |
-| 7  | Отсутствует )                 | "Ожидается ')'"                            |
-| 8  | Неверный формат аргумента     | "Ожидается вещественное число"             |
-| 9  | Отсутствует ,                 | "Ожидается ','"                            |
-| 10 | Отсутствует ;                 | "Ожидается ';'"                            |
-| 11 | Неизвестный символ            | "Недопустимый символ"                      |
+Метод Айронса
+Метод Айронса — это метод восстановления после синтаксических ошибок, который позволяет продолжить разбор после обнаружения ошибки, не прекращая анализ.
+
+Принцип работы
+При обнаружении ошибки:
+
+Сохраняется информация об ошибке (фрагмент, позиция, описание)
+
+Анализатор пропускает входные токены до нахождения "восстанавливающего" символа
+
+После восстановления:
+
+Разбор продолжается с найденной позиции
+
+Это позволяет обнаружить несколько ошибок за один проход
+
+#Пример диагностики 
+1.`complex_num2 = num::complex::Complex::new(3.1, -4.2);`
+<img width="674" height="289" alt="image" src="https://github.com/user-attachments/assets/4de41d0a-d28e-413a-a524-967f079ef5c5" />
+
+2.`let x = Type::nw(1.0, 2.0);`
+<img width="679" height="298" alt="image" src="https://github.com/user-attachments/assets/bb966cee-f556-4ebf-b92c-8393bdf081c4" />
+
+3.`let x = Type::new(1.0, 2.0)`
+<img width="748" height="278" alt="image" src="https://github.com/user-attachments/assets/79ae5fd5-bc15-4715-a19b-ddf322ac6842" />
+
+
 
 # Тестовые примеры (скриншоты интерфейса программы, примеры анализа конкретных строк в программе).
 # test 1 
-<img width="435" height="193" alt="image" src="https://github.com/user-attachments/assets/5086fad4-0840-4814-b03d-8a484ef428de" />
+<img width="819" height="336" alt="image" src="https://github.com/user-attachments/assets/7e3bac1c-3f59-48cd-8c61-7fa17b6abbec" />
+
 
 # test 2
-<img width="624" height="247" alt="image" src="https://github.com/user-attachments/assets/8e8f8e57-0d57-4f72-bb5c-56aaa3e344d7" />
+<img width="773" height="306" alt="image" src="https://github.com/user-attachments/assets/73495f47-9c22-47c2-b016-f480a54e2192" />
+
 
 # test 3
-<img width="662" height="653" alt="image" src="https://github.com/user-attachments/assets/cf17e55a-eabe-4238-8cd5-d5e9919bf24e" />
-#
+<img width="759" height="348" alt="image" src="https://github.com/user-attachments/assets/5568a367-e445-432d-b10a-b6706cedccd4" />
+
+# test 4
+<img width="731" height="439" alt="image" src="https://github.com/user-attachments/assets/9bf20967-69dc-482d-8a37-56fa3be3bda7" />
+
+# test 5
+<img width="793" height="324" alt="image" src="https://github.com/user-attachments/assets/ce5706b6-90b6-4d36-a116-71e4a701d5ef" />
+
+#test 6
+<img width="698" height="300" alt="image" src="https://github.com/user-attachments/assets/d74dacb6-4011-4698-9f1a-59fcee2e9015" />
+
+#test 7 
+<img width="482" height="248" alt="image" src="https://github.com/user-attachments/assets/296e69e9-eeb1-404d-a1a1-83188fa35e24" />

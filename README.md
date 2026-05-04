@@ -55,10 +55,10 @@ LETTER → "a".."z" | "A".."Z" | "_"
 DIGIT  → "0".."9"
 
 
-##Терминалы (VT)
+## Терминалы (VT)
 <img width="580" height="458" alt="image" src="https://github.com/user-attachments/assets/d95295ed-e5a5-44d0-a0bf-f274ffe8e4f0" />
 
-##Нетерминалы (VN)
+## Нетерминалы (VN)
 <img width="566" height="380" alt="image" src="https://github.com/user-attachments/assets/ad129ef2-d134-4382-bc8a-3142ce9d7b48" />
 
 

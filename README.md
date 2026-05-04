@@ -71,8 +71,11 @@ A — один нетерминальный символ
 
 α — цепочка из терминалов и нетерминалов (может быть пустой)
 
-#метод анализа
-##Алгоритм синтаксического анализа
+# метод анализа
+## Схема рекурсивного спуска (РС)
+<img width="478" height="1199" alt="hLJ1RX9H5DsJy0ytpmrO5sfqmuHO8xHXeGjRDuYBKHxjXEaRCZF4n5N1M6jeqeJ4fHhz0h2W26Nw2_VzWb_YUM_QIhKrCG4ItdltdNlFENVki1h5RXYtT_ni9cfwgkM6xWuzTryqjyAWhUeF0Zy8wTfQsNmN8NNPSDj-l1QeUCDx9UdMxSLR5THb95jqz-PYD7HLqqJl89hDn5xiI-BF-Ws" src="https://github.com/user-attachments/assets/6707b0e0-759b-476e-b7c5-995754f8701d" />
+
+## Алгоритм синтаксического анализа
 <img width="164" height="1121" alt="Диаграмма без названия drawio (5)" src="https://github.com/user-attachments/assets/39341fa7-136a-4d17-8cc0-02c9511cd556" />
 
 # Диагностика и нейтрализация синтаксических ошибок.

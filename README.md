@@ -36,7 +36,15 @@
 
 
 ## Разработка грамматики
-`G[Z] = (VT, VN, Z, P)`
+формальные определение грамматики 
+Z      → "let" ID "=" PATH "::" "new" "(" ARGS ")" ";"
+PATH   → ID ("::" ID)*
+ARGS   → NUM "," NUM
+NUM    → ["-"] DIGITS ["." DIGITS]
+ID     → LETTER (LETTER | DIGIT | "_")*
+DIGITS → DIGIT+
+LETTER → "a".."z" | "A".."Z" | "_"
+DIGIT  → "0".."9"
 
 Терминалы (VT)
 `V_T = { let, =, ;, ::, ,, (, ), -, num, complex, Complex, new, INTEGER, FLOAT }`

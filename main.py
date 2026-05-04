@@ -851,9 +851,10 @@ project/
                 self.output_area.append(f"\nОбщее количество синтаксических ошибок: {len(syntax_errors)}")
                 self.statusbar.showMessage(f"Анализ завершен: {len(syntax_errors)} синтаксических ошибок")
                 
-                # Переключаем на вкладку Ошибки
+                # ВСЕГДА переключаем на вкладку Ошибки (индекс 1)
                 self.tab_widget.setCurrentIndex(1)
             else:
+                # Нет ошибок
                 self.error_table.setRowCount(1)
                 ok_item = QTableWidgetItem("✅ Синтаксических ошибок нет")
                 ok_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -867,13 +868,13 @@ project/
                 self.output_area.append("Синтаксический анализ завершен без ошибок")
                 self.statusbar.showMessage("Анализ успешно завершен")
                 
-                # Переключаем на вкладку Лексемы
-                self.tab_widget.setCurrentIndex(2)
+                # Оставляем на вкладке Ошибки (индекс 1) - там будет "ошибок нет"
+                self.tab_widget.setCurrentIndex(1)
                 
         except Exception as e:
             self.output_area.append(f"\nКритическая ошибка анализа: {str(e)}")
             self.statusbar.showMessage("Ошибка анализа")
-            self.tab_widget.setCurrentIndex(0)
+            self.tab_widget.setCurrentIndex(0)  # При ошибке - на Лог
     
     def on_token_table_clicked(self, row, column):
         """Обработка клика по строке таблицы лексем"""

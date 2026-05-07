@@ -29,19 +29,19 @@ let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 ## разработка грамматики:
 
 ```
-<START> 'let' <LET>
-<LET> letter <ID>
-<ID> letter <ID> digit <ID> '_' <ID> '=' <EQUAL>
-<EQUAL> 'num::comlex::Comlex::new' <OPEN>
-<OPEN> '(' <NUM1>
-<NUM1> digit <COMMA> '.' <COMMA> digit <COMMA> ',' <NUM2> 
-<NUM2> '-' <COMMA> digit <COMMA> '.' <COMMA> digit <NUM3> 
+<START> -> 'let' <LET>
+<LET> -> letter <ID>
+<ID> -> letter <ID>| digit <ID>| '_' <ID>| '=' <EQUAL>
+<EQUAL> -> 'num::comlex::Comlex::new' <OPEN>
+<OPEN> -> '(' <NUM1>
+<NUM1> -> digit <COMMA> -> '.' <COMMA1> -> digit <COMMA1> -> ',' <NUM2> 
+<NUM2> -> '-' <COMMA2> -> digit <COMMA3> -> '.' <COMMA3> -> digit <NUM3> 
 <NUM3> ')' <END>
 <END> ';'
 
 ```
 ## Терминальный словарь 
-V_T = {let,letter,digit,_,=,::,new,(,),,,;,.,−}
+V_T = {
 
 ## неТерминальный словарь
 V_N = {START, LET, ID, EQUAL, OPEN, NUM1, COMMA, NUM2, END }

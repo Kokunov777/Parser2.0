@@ -26,81 +26,24 @@ let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 <img width="1108" height="630" alt="image" src="https://github.com/user-attachments/assets/e961b46a-049a-47b3-baa2-c7be42efefad" />
 
 
+## разработка грамматики:
+
+```
+<START> 'let' <LET>
+<LET> letter <ID>
+<ID> letter <ID> digit <ID> '_' <ID> '=' <EQUAL>
+<EQUAL> 'num::comlex::Comlex::new' <OPEN>
+<OPEN> '(' <NUM1>
+<NUM1> digit <NUM1> '.' <COMMA> digit <NUM2>
+<COMMA> '-' <NUM2> digit <COMMA> '.' <NUM2> digit <NUM2> 
+<NUM2> ')' <END>
+<END> ';'
+
+```
 
 
 
 
-## Разработка грамматики
-
-G[Z] = { V_T, V_N, Z, P}
-
-z = "let" let
-
-let -> lettev id
-
-id -> lettev id
-
-digit id -> | '_' id '=' Eqaul
-
-Equal -> 'num::complex::Complex::hew' OPEN
-
-OPEN -> '(' NUMB
-
-NUMB -> '3.1' digit
-
-digit ->',' digit
-
-digit ->  '-4.2' OPEN
-
-OPEN -> ')' END
-
-END -> ';'
-## терминальные символы символ (V_T)
-V_T = {let,  =,  num, ::, new, (, 3.1, -4.2, ), ;,)
-
-## нетерминальный символ (V_N)
-VN = {complex_num2, complex, Complex, }
-
-# Классификация грамматики (по Хомскому)
-Тип 2 — Контекстно-свободная грамматика (КС-грамматика)
-
-Все правила имеют форму A → α, где:
-
-A — один нетерминальный символ
-
-α — цепочка из терминалов и нетерминалов (может быть пустой)
-
-# метод анализа
-
-## Алгоритм синтаксического анализа
-
-
-# Диагностика и нейтрализация синтаксических ошибок.
-Метод Айронса
-Метод Айронса — это метод восстановления после синтаксических ошибок, который позволяет продолжить разбор после обнаружения ошибки, не прекращая анализ.
-
-Принцип работы
-При обнаружении ошибки:
-
-Сохраняется информация об ошибке (фрагмент, позиция, описание)
-
-Анализатор пропускает входные токены до нахождения "восстанавливающего" символа
-
-После восстановления:
-
-Разбор продолжается с найденной позиции
-
-Это позволяет обнаружить несколько ошибок за один проход
-
-#Пример диагностики 
-1.`complex_num2 = num::complex::Complex::new(3.1, -4.2);`
-<img width="674" height="289" alt="image" src="https://github.com/user-attachments/assets/4de41d0a-d28e-413a-a524-967f079ef5c5" />
-
-2.`let x = Type::nw(1.0, 2.0);`
-<img width="679" height="298" alt="image" src="https://github.com/user-attachments/assets/bb966cee-f556-4ebf-b92c-8393bdf081c4" />
-
-3.`let x = Type::new(1.0, 2.0)`
-<img width="748" height="278" alt="image" src="https://github.com/user-attachments/assets/79ae5fd5-bc15-4715-a19b-ddf322ac6842" />
 
 
 

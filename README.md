@@ -33,7 +33,11 @@ let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 <LET> -> letter <ID>
 <ID> -> letter <ID>| digit <ID>| '_' <ID>| '=' <EQUAL>
 <EQUAL> -> 'num::comlex::Comlex::new' <OPEN>
-<OPEN> -> '(' <NUM1>
+<OPEN> -> 'num' <open1>
+<opne1> -> '::' <open2>
+<opne3> -> 'Comlex' <open4>
+<opne4> -> 'new' <open5>
+<OPEN4> -> '(' <NUM1>
 <NUM1> -> digit <COMMA> -> '.' <COMMA1> -> digit <COMMA1> -> ',' <NUM2> 
 <NUM2> -> '-' <COMMA2> -> digit <COMMA3> -> '.' <COMMA3> -> digit <NUM3> 
 <NUM3>-> ')' <END>

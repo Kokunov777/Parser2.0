@@ -1,16 +1,3 @@
-"""
-Синтаксический анализатор (парсер) для объявления комплексного числа на языке Rust
-Вариант 5: Объявление комплексного числа с инициализацией
-
-Грамматика G[Z]:
-Z → "let" ID "=" PATH "::" "new" "(" ARGS ")" ";"
-PATH → ID ("::" ID)*
-ARGS → NUM "," NUM
-NUM → ["-"] DIGITS ["." DIGITS]
-ID → LETTER (LETTER | DIGIT | "_")*
-DIGITS → DIGIT+
-"""
-
 from lexical_analyzer import LexicalAnalyzer, Token
 
 
@@ -94,9 +81,7 @@ class SyntaxAnalyzer:
         return success, self.errors
     
     def parse_Z(self):
-        """
-        Z → "let" ID "=" PATH "::" "new" "(" ARGS ")" ";"
-        """
+      
         token = self._get_token()
         
         if token is None:
@@ -184,10 +169,7 @@ class SyntaxAnalyzer:
             )
     
     def parse_PATH(self):
-        """
-        PATH → ID ("::" ID)*
-        Читаем: ID, потом (:: ID)* пока не встретим ::new
-        """
+   
         token = self._get_token()
         
         if token is None:
@@ -232,8 +214,7 @@ class SyntaxAnalyzer:
         return True
     
     def parse_double_colon_new(self):
-        """Разбор: "::" "new" """
-        # ::
+  
         token = self._get_token()
         if token is None:
             line, pos = self._get_last_position()
@@ -277,7 +258,7 @@ class SyntaxAnalyzer:
         return True
     
     def parse_paren_args(self):
-        """Разбор: "(" ARGS """
+  
         # (
         token = self._get_token()
         if token is None:
@@ -304,7 +285,7 @@ class SyntaxAnalyzer:
         return True
     
     def parse_close_paren(self):
-        """Разбор: ')' """
+ 
         token = self._get_token()
         if token is None:
             line, pos = self._get_last_position()
@@ -327,7 +308,7 @@ class SyntaxAnalyzer:
         return True
     
     def parse_semicolon(self):
-        """Разбор: ';' """
+        
         token = self._get_token()
         if token is None:
             line, pos = self._get_last_position()
@@ -345,7 +326,7 @@ class SyntaxAnalyzer:
         return True
     
     def parse_ARGS(self):
-        """ARGS → NUM "," NUM"""
+      
         if not self._parse_num():
             return
         
@@ -368,7 +349,7 @@ class SyntaxAnalyzer:
             return
     
     def _parse_num(self):
-        """NUM → ["-"] DIGITS ["." DIGITS]"""
+   
         token = self._get_token()
         
         if token is None:

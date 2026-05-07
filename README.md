@@ -11,28 +11,23 @@
 ## Постановка задачи
 Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа.
 
-## Вариант задания: Номер варианта,
-**Вариант 5**: Объявление комплексного числа с инициализацией на языке Rust
+## Вариант задания: 
+5. Объявление комплексного числа с инициализацией на языке Rust
+let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 
-## Текстовое описание
-Разработать синтаксический анализатор для конструкции объявления комплексного числа в языке Rust.
+## Пример верных строк 
+## primer 1  let complex_num2 = num::complex::Complex::new(3.1, -4.2);
+<img width="759" height="455" alt="image" src="https://github.com/user-attachments/assets/1eabf992-45ec-42c2-9427-fbd29951f288" />
 
-Синтаксис конструкции:
-`let complex_num2 = num::complex::Complex::new(3.1, -4.2);`
+## primer 2 let x = Complex::new(1, 2);
+<img width="819" height="445" alt="image" src="https://github.com/user-attachments/assets/854c0d84-5a3e-4d83-8eda-94bc063bb911" />
 
- <img width="815" height="808" alt="image" src="https://github.com/user-attachments/assets/41ea0615-954c-4885-8455-7c9316214da8" />
-               
-## его текстовое описание 2–3 примера корректных входных строк для данного варианта и перечень допустимых лексем.
-`let x = 123;`
-<img width="511" height="441" alt="image" src="https://github.com/user-attachments/assets/e7ac4397-a654-423e-91cc-458577dea517" />
-
-`let c = std::complex::Complex::new(0.0, 1.0);`
-<img width="655" height="806" alt="image" src="https://github.com/user-attachments/assets/5b2b8259-4dd3-48e0-837f-e61db6eddbd3" />
+## primer 3 let z = std::math::Complex::new(0.0, -1.5);
+<img width="1108" height="630" alt="image" src="https://github.com/user-attachments/assets/e961b46a-049a-47b3-baa2-c7be42efefad" />
 
 
-# таблица лексемы 
-<img width="725" height="566" alt="image" src="https://github.com/user-attachments/assets/824e97b3-1968-40c0-91a4-0de98c2a188e" />
-<img width="738" height="331" alt="image" src="https://github.com/user-attachments/assets/363fabbf-cb25-436d-8600-2fa2074c8e75" />
+
+
 
 
 ## Разработка грамматики

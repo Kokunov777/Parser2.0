@@ -34,16 +34,23 @@ let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 <ID> letter <ID> digit <ID> '_' <ID> '=' <EQUAL>
 <EQUAL> 'num::comlex::Comlex::new' <OPEN>
 <OPEN> '(' <NUM1>
-<NUM1> digit <NUM1> '.' <COMMA> digit <NUM2>
-<COMMA> '-' <NUM2> digit <COMMA> '.' <NUM2> digit <NUM2> 
-<NUM2> ')' <END>
+<NUM1> digit <COMMA> '.' <COMMA> digit <COMMA> ',' <NUM2> 
+<NUM2> '-' <COMMA> digit <COMMA> '.' <COMMA> digit <NUM3> 
+<NUM3> ')' <END>
 <END> ';'
 
 ```
+## Терминальный словарь 
+V_T = {let,letter,digit,_,=,::,new,(,),,,;,.,−}
+
+## неТерминальный словарь
+V_N = {START, LET, ID, EQUAL, OPEN, NUM1, COMMA, NUM2, END }
+
+Грамматика G[Z] для объявления комплексного числа на языке Rust является автоматной (тип 3) и относится к подклассу праволинейных автоматных грамматик. Это означает, что для неё существует детерминированный конечный автомат, который может быть эффективно реализован в виде программы-распознавателя.
 
 
-
-
+# Схема автоматов 
+<img width="797" height="443" alt="image" src="https://github.com/user-attachments/assets/4e7fd78c-e2de-4480-a132-e65f303df8a5" />
 
 
 

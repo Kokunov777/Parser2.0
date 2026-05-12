@@ -1,22 +1,3 @@
-"""
-Синтаксический анализатор (парсер) для объявления комплексного числа на языке Rust
-Вариант 5: Объявление комплексного числа с инициализацией
-
-Грамматика G[Z]:
-Z    → "let" ID "=" E ";"
-E    → PATH "::" "new" "(" ARGS ")"
-PATH → ID ("::" ID)*
-ARGS → NUM "," NUM
-NUM  → ["-"] DIGITS ["." DIGITS]
-ID   → LETTER (LETTER | DIGIT | "_")*
-DIGITS → DIGIT+
-LETTER → "a".."z" | "A".."Z" | "_"
-DIGIT  → "0".."9"
-
-Метод анализа: нисходящий разбор (рекурсивный спуск)
-Нейтрализация ошибок: метод Айронса
-"""
-
 from lexical_analyzer import LexicalAnalyzer, Token
 
 
@@ -112,7 +93,7 @@ class SyntaxAnalyzer:
         success = len(self.errors) == 0
         return success, self.errors
     
-    # ==================== МЕТОДЫ РЕКУРСИВНОГО СПУСКА ====================
+  
     
     def parse_Z(self):
         """

@@ -29,18 +29,24 @@ let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 ## разработка грамматики:
 
 ```
-<START> -> 'let' <LET>
-<LET> -> letter <ID>
-<ID> -> letter <ID>| digit <ID>| '_' <ID>| '=' <EQUAL>
-<EQUAL> -> 'num::comlex::Comlex::new' <OPEN>
-<OPEN> -> '(' <NUM1>
-<NUM1> -> '-' <NUM1> | digit <INT1> | '.' <INT1> | digit <FLOAT>
-<FLOAT> -> ',' <FLOAT1>
-<FLOAT1> -> '-' <NUM2> | digit <INT2> | '.' <INT2> | digit <OPEN1>
-<OPEN1> -> ')' <END>
-<END> -> ';'
+1.	<START> -> 'let' <LET>
+2.	<LET> -> letter <ID>
+3.	<ID> -> letter <ID>| digit <ID>| '_' <ID>| '=' <EQUAL>
+4.	<EQUAL> -> 'num' < EQUAL2>
+5.	<EQUAL2> -> '::' < EQUAL3>
+6.	<EQUAL3> -> 'comlex' < EQUAL4>
+7.	<EQUAL4> -> '::' < EQUAL5>
+8.	<EQUAL5> -> 'Comlex' < EQUAL6>
+9.	<EQUAL6> -> '::' < EQUAL7>
+10.	<EQUAL7> -> 'new' < OPEN>
+11.	<OPEN> -> '(' <NUM1>
+12.	<NUM1> -> '-' <NUM1> | digit <INT1> | '.' <INT1> | digit <FLOAT>
+13.	<FLOAT> -> ',' <FLOAT1>
+14.	<FLOAT1> -> '-' <NUM2> | digit <INT2> | '.' <INT2> | digit <OPEN1>
+15.	<OPEN1> -> ')' <END>
+16.	<END> -> ';'
 
-V_N = <START>, <LET>, <ID>, <EQUAL>, <OPEN>, <NUM1>, <INT1>, <FLOAT>, <FLOAT1>, <NUM2>, <OPEN1>,  <END>
+•	Vn = {<LET>, <ID>, <EQUAL><EQUAL2>,><EQUAL3>,><EQUAL4>,><EQUAL5>,><EQUAL6>,><EQUAL7> <OPEN>, <NUM1>, <INT1>, <FLOAT>, <FLOAT1>, <NUM2>, <INT2>, <OPEN1>, <END>}
 V_T = { a....z, A....Z, 0....9, = , (, ), ,, ., -, ;}
 
 

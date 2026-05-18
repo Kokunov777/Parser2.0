@@ -321,8 +321,10 @@ V_T = { a....z, A....Z, 0....9, = , (, ), ,, ., -, ;}
 *Примеры скриншотов:*
 
 1. **Поиск годов 2000–2010** – окно приложения с текстом, содержащим годы, и таблицей результатов с найденными значениями.
-![alt text](image.png)
+<img width="856" height="616" alt="image" src="https://github.com/user-attachments/assets/bbcca49e-e54f-4ab4-ae58-0c4457957f69" />
+
 
 2. **Поиск номеров карт Maestro** – аналогично, с номерами карт.
-![alt text](image-1.png)
+<img width="1147" height="653" alt="image" src="https://github.com/user-attachments/assets/a50bc98a-0d6b-4f29-be90-9e7e37c142f9" />
+
 

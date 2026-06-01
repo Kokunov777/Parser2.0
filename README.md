@@ -548,23 +548,34 @@ num → digit {digit}
 <img width="764" height="970" alt="image" src="https://github.com/user-attachments/assets/762635bc-2c0f-4a19-904f-7990dec716ed" />
 
 **Скриншоты работы лексера и парсера**
+
 *Пример 1: Корректное выражение `2 + 3 * 4`*
+
 <img width="610" height="526" alt="image" src="https://github.com/user-attachments/assets/14546f09-3ed4-418d-905b-7adac4e8bffc" />
+
 *Пример 2: Выражение с ошибкой `2 + * 3`*
+
  <img width="564" height="553" alt="image" src="https://github.com/user-attachments/assets/0f7ddedd-573f-4823-b74a-dc905a783fad" />
+
 *Пример 3: Выражение с идентификатором `a + b`*
+
 <img width="559" height="644" alt="image" src="https://github.com/user-attachments/assets/711f750a-4312-417f-a863-7449fc000cc4" />
 
+
 **Внутренняя форма представления программы (тетрады)**
+
 <img width="1270" height="561" alt="image" src="https://github.com/user-attachments/assets/2bfaf4cc-a80d-4591-91d6-4fb0c9964aca" />
 
+
 **Скриншот с таблицей тетрад для выражения `(2 + 3) * 4`**
+
 <img width="1211" height="608" alt="image" src="https://github.com/user-attachments/assets/3a0bc5e5-e5f9-47ee-8b3c-c57873241f3b" />
 
 **ПОЛИЗ (польская инверсная запись)**
 ПОЛИЗ формируется с использованием стека операций (алгоритм Дейкстры). Для выражений, состоящих исключительно из целых чисел, также вычисляется значение.
 
 **Скриншот с формированием ПОЛИЗ и вычислением арифметического выражения**
+
 <img width="450" height="488" alt="image" src="https://github.com/user-attachments/assets/9508efb0-8460-4d12-b73c-7528edef7de5" />
 
 **Инструкция по запуску**

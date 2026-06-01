@@ -11,101 +11,64 @@
 ## Постановка задачи
 Разработать синтаксический анализатор (парсер) в соответствии с индивидуальным вариантом курсовой (расчетно-графической) работы, интегрировать его в приложение из лабораторной работы №1 и обеспечить наглядный вывод результатов анализа.
 
-## Вариант задания: Номер варианта,
-**Вариант 5**: Объявление комплексного числа с инициализацией на языке Rust
+## Вариант задания: 
+5. Объявление комплексного числа с инициализацией на языке Rust
+let complex_num2 = num::complex::Complex::new(3.1, -4.2);
 
-## Текстовое описание
-Разработать синтаксический анализатор для конструкции объявления комплексного числа в языке Rust.
+## Пример верных строк 
+## primer 1  let complex_num2 = num::complex::Complex::new(3.1, -4.2);
+<img width="759" height="455" alt="image" src="https://github.com/user-attachments/assets/1eabf992-45ec-42c2-9427-fbd29951f288" />
 
-Синтаксис конструкции:
-`let complex_num2 = num::complex::Complex::new(3.1, -4.2);`
+## primer 2 let x = Complex::new(1, 2);
+<img width="819" height="445" alt="image" src="https://github.com/user-attachments/assets/854c0d84-5a3e-4d83-8eda-94bc063bb911" />
 
- <img width="815" height="808" alt="image" src="https://github.com/user-attachments/assets/41ea0615-954c-4885-8455-7c9316214da8" />
-               
-## его текстовое описание 2–3 примера корректных входных строк для данного варианта и перечень допустимых лексем.
-`let x = 123;`
-<img width="511" height="441" alt="image" src="https://github.com/user-attachments/assets/e7ac4397-a654-423e-91cc-458577dea517" />
-
-`let c = std::complex::Complex::new(0.0, 1.0);`
-<img width="655" height="806" alt="image" src="https://github.com/user-attachments/assets/5b2b8259-4dd3-48e0-837f-e61db6eddbd3" />
+## primer 3 let z = std::math::Complex::new(0.0, -1.5);
+<img width="1108" height="630" alt="image" src="https://github.com/user-attachments/assets/e961b46a-049a-47b3-baa2-c7be42efefad" />
 
 
-# таблица лексемы 
-<img width="725" height="566" alt="image" src="https://github.com/user-attachments/assets/824e97b3-1968-40c0-91a4-0de98c2a188e" />
-<img width="738" height="331" alt="image" src="https://github.com/user-attachments/assets/363fabbf-cb25-436d-8600-2fa2074c8e75" />
+## разработка грамматики:
+
+```
+<START> -> 'let' <LET>
+<LET> -> letter <ID>
+<ID> -> letter <ID>| digit <ID>| '_' <ID>| '=' <EQUAL>
+<EQUAL> -> 'num::comlex::Comlex::new' <OPEN>
+<OPEN> -> '(' <NUM1>
+<NUM1> -> '-' <NUM1> | digit <INT1> | '.' <INT1> | digit <FLOAT>
+<FLOAT> -> ',' <FLOAT1>
+<FLOAT1> -> '-' <NUM2> | digit <INT2> | '.' <INT2> | digit <OPEN1>
+<OPEN1> -> ')' <END>
+<END> -> ';'
+
+V_N = <START>, <LET>, <ID>, <EQUAL>, <OPEN>, <NUM1>, <INT1>, <FLOAT>, <FLOAT1>, <NUM2>, <OPEN1>,  <END>
+V_T = { a....z, A....Z, 0....9, = , (, ), ,, ., -, ;}
+letter = A | B | C | ... | Z | a | b | c | ... | z
+digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+```
+Грамматика G[Z] для объявления комплексного числа на языке Rust является автоматной (тип 3) и относится к подклассу праволинейных автоматных грамматик. Это означает, что для неё существует детерминированный конечный автомат, который может быть эффективно реализован в виде программы-распознавателя.
 
 
-## Разработка грамматики
-формальные определение грамматики 
-
-Z      → "let" ID "=" PATH "::" "new" "(" ARGS ")" ";"
-
-PATH   → ID ("::" ID)*
-
-ARGS   → NUM "," NUM
-
-NUM    → ["-"] DIGITS ["." DIGITS]
-
-ID     → LETTER (LETTER | DIGIT | "_")*
-
-DIGITS → DIGIT+
-
-LETTER → "a".."z" | "A".."Z" | "_"
-
-DIGIT  → "0".."9"
+# Схема автоматов 
+<img width="782" height="1107" alt="grammatic drawio" src="https://github.com/user-attachments/assets/a17c906c-f57a-4070-ac22-7525c05ad74a" />
 
 
-## Терминалы (VT)
-<img width="580" height="458" alt="image" src="https://github.com/user-attachments/assets/d95295ed-e5a5-44d0-a0bf-f274ffe8e4f0" />
+# Классификация грамматики (по Хомскому).
+Согласно определению (см. раздел 2.7), правила автоматной грамматики должны иметь вид A → aB или A → a, где A, B ∈ V_N, a ∈ V_T.
 
-## Нетерминалы (VN)
-<img width="566" height="380" alt="image" src="https://github.com/user-attachments/assets/ad129ef2-d134-4382-bc8a-3142ce9d7b48" />
+Правило 1 (<Объявление> → let id : path = <Инициализатор> ;) не удовлетворяет этому условию, так как в правой части содержит несколько терминалов, за которыми следует нетерминал.
 
+Правило 5 (<ВызовКонструктора> → path ( float , float )) также не соответствует, так как в нем отсутствует нетерминал-преемник в конце цепочки.
+Вывод: грамматика не является автоматной.
 
-# Классификация грамматики (по Хомскому)
-Тип 2 — Контекстно-свободная грамматика (КС-грамматика)
+Проверка на принадлежность к контекстно-свободным (КС) грамматикам.
+Правила КС-грамматики имеют вид A → α, где A ∈ V_N, а α ∈ (V_T ∪ V_N)*.
 
-Все правила имеют форму A → α, где:
+Все правила грамматики G[<Объявление>] удовлетворяют этому критерию. В левой части каждого правила находится ровно один нетерминальный символ (<Объявление>, <Инициализатор>, <ВызовКонструктора>).
+Вывод: грамматика является контекстно-свободной (КС-грамматикой).
 
-A — один нетерминальный символ
-
-α — цепочка из терминалов и нетерминалов (может быть пустой)
-
-# метод анализа
-## Схема рекурсивного спуска (РС)
-<img width="478" height="1199" alt="hLJ1RX9H5DsJy0ytpmrO5sfqmuHO8xHXeGjRDuYBKHxjXEaRCZF4n5N1M6jeqeJ4fHhz0h2W26Nw2_VzWb_YUM_QIhKrCG4ItdltdNlFENVki1h5RXYtT_ni9cfwgkM6xWuzTryqjyAWhUeF0Zy8wTfQsNmN8NNPSDj-l1QeUCDx9UdMxSLR5THb95jqz-PYD7HLqqJl89hDn5xiI-BF-Ws" src="https://github.com/user-attachments/assets/6707b0e0-759b-476e-b7c5-995754f8701d" />
-
-## Алгоритм синтаксического анализа
-<img width="164" height="1121" alt="Диаграмма без названия drawio (5)" src="https://github.com/user-attachments/assets/39341fa7-136a-4d17-8cc0-02c9511cd556" />
-
-# Диагностика и нейтрализация синтаксических ошибок.
-Метод Айронса
-Метод Айронса — это метод восстановления после синтаксических ошибок, который позволяет продолжить разбор после обнаружения ошибки, не прекращая анализ.
-
-Принцип работы
-При обнаружении ошибки:
-
-Сохраняется информация об ошибке (фрагмент, позиция, описание)
-
-Анализатор пропускает входные токены до нахождения "восстанавливающего" символа
-
-После восстановления:
-
-Разбор продолжается с найденной позиции
-
-Это позволяет обнаружить несколько ошибок за один проход
-
-#Пример диагностики 
-1.`complex_num2 = num::complex::Complex::new(3.1, -4.2);`
-<img width="674" height="289" alt="image" src="https://github.com/user-attachments/assets/4de41d0a-d28e-413a-a524-967f079ef5c5" />
-
-2.`let x = Type::nw(1.0, 2.0);`
-<img width="679" height="298" alt="image" src="https://github.com/user-attachments/assets/bb966cee-f556-4ebf-b92c-8393bdf081c4" />
-
-3.`let x = Type::new(1.0, 2.0)`
-<img width="748" height="278" alt="image" src="https://github.com/user-attachments/assets/79ae5fd5-bc15-4715-a19b-ddf322ac6842" />
-
-
+Проверка на принадлежность к контекстно-зависимым (КЗ) грамматикам и грамматикам типа 0.
+Поскольку любой КС-язык является также и КЗ-языком, наша грамматика формально принадлежит и к типу 1. Однако практическая ценность этого факта невелика, так как для реализации анализатора требуется более узкий, эффективно разбираемый подкласс.
 
 # Тестовые примеры (скриншоты интерфейса программы, примеры анализа конкретных строк в программе).
 # test 1 

@@ -1,8 +1,12 @@
+"""
+Синтаксический анализатор (парсер) для объявления комплексного числа на языке Rust
+Вариант 5: Объявление комплексного числа с инициализацией
+"""
+
 from lexical_analyzer import LexicalAnalyzer, Token
 
 
 class SyntaxError:
-    """Класс для хранения информации о синтаксической ошибке"""
     def __init__(self, fragment, line, position, description):
         self.fragment = fragment
         self.line = line
@@ -11,375 +15,326 @@ class SyntaxError:
 
 
 class SyntaxAnalyzer:
-    """Синтаксический анализатор с методом нейтрализации ошибок Айронса"""
     
     def __init__(self):
         self.tokens = []
         self.pos = 0
         self.errors = []
         self.lexical_analyzer = LexicalAnalyzer()
+        #self.error_count = 0
+        #self.max_errors = 1  # ограничение на одну ошибку
     
     def _get_token(self):
-        """Получить текущий значащий токен (пропуская пробелы и лексические ошибки)"""
         while self.pos < len(self.tokens):
             t = self.tokens[self.pos]
             if t.token_type in ['разделитель (пробел)', 'разделитель (новая строка)']:
                 self.pos += 1
             elif t.is_error:
-                self.pos += 1
+                # Возвращаем токен ошибки, чтобы вызывающий код мог решить, какую ошибку добавить
+                return t
             else:
                 return t
         return None
     
-    def _peek_next(self):
-        """Подсмотреть следующий значащий токен без продвижения"""
-        saved = self.pos
-        token = self._get_token()
-        if token:
-            self.pos += 1
-            next_token = self._get_token()
-            self.pos = saved
-            return next_token
-        return None
-    
     def _next(self):
-        """Перейти к следующему токену"""
         self.pos += 1
     
-    def _get_last_position(self):
-        """Позиция последнего значащего токена"""
-        pos = self.pos - 1
-        while pos >= 0:
-            t = self.tokens[pos]
-            if t.token_type not in ['разделитель (пробел)', 'разделитель (новая строка)'] and not t.is_error:
-                return t.line, t.end_pos + 1
-            pos -= 1
-        return 1, 1
-    
     def _add_error(self, fragment, line, pos, desc):
-        """Добавить синтаксическую ошибку"""
-        self.errors.append(SyntaxError(fragment, line, pos, desc))
+        #if self.error_count < self.max_errors:
+            self.errors.append(SyntaxError(fragment, line, pos, desc))
+           # self.error_count += 1
+    
+    def _is_digit(self, s):
+        return len(s) == 1 and s.isdigit()
+    
+    def _is_identifier(self, token):
+        if token is None:
+            return False
+        return token.token_type in ['идентификатор', 'ключевое слово']
     
     def _is_number_token(self, token):
-        """Проверка: является ли токен числом"""
         if token is None:
             return False
         t = token.token_type.lower() if token.token_type else ''
-        if 'число' in t or 'константа' in t or 'целое' in t:
-            return True
-        lex = token.lexeme
-        if lex.startswith('-'):
-            lex = lex[1:]
-        if lex and all(c.isdigit() or c == '.' for c in lex) and lex.count('.') <= 1:
-            return True
-        return False
+        return 'число' in t or 'целое' in t or 'константа' in t
     
     def analyze(self, text):
-        """Главный метод анализа. Возвращает (success, errors)"""
         self.errors = []
+       # self.error_count = 0
         
         if not text or not text.strip():
             self._add_error("", 1, 1, "Пустая строка для анализа")
             return False, self.errors
         
-        # Лексический анализ
         all_tokens, lex_errors = self.lexical_analyzer.analyze(text)
         self.tokens = all_tokens
         self.pos = 0
         
-        # Синтаксический разбор
-        self.parse_Z()
+        self._parse()
         
         success = len(self.errors) == 0
         return success, self.errors
     
-  
-    
-    def parse_Z(self):
-        """
-        Z → "let" ID "=" E ";"
-        """
+    def _parse(self):
+        # 1. 'let'
         token = self._get_token()
-        
         if token is None:
             self._add_error("", 1, 1, "Пустая строка для анализа")
             return
         
-        # 1. Проверка "let"
-        if token.lexeme != 'let':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидалось ключевое слово 'let', получено '{token.lexeme}'"
-            )
-            # НЕ продвигаемся! Токен остаётся и будет обработан как ID
+        if token.lexeme == 'let':
+            self._next()
         else:
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидалось ключевое слово 'let', получено '{token.lexeme}'")
             self._next()
         
         # 2. Идентификатор
         token = self._get_token()
         if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидался идентификатор")
+            self._add_error("", 1, 1, "Ожидался идентификатор")
             return
         
-        if token.token_type == 'идентификатор':
+        if self._is_identifier(token):
             self._next()
         else:
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидался идентификатор, получено '{token.lexeme}'"
-            )
-            # Поиск '='
-            while self.pos < len(self.tokens):
-                t = self.tokens[self.pos]
-                if t.lexeme == '=':
-                    break
-                self.pos += 1
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидался идентификатор, получено '{token.lexeme}'")
+            self._next()
         
-        # 3. Оператор '='
+        # 3. '='
         token = self._get_token()
         if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидался оператор '='")
+            self._add_error("", 1, 1, "Ожидался оператор '='")
             return
         
         if token.lexeme == '=':
             self._next()
         else:
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидался оператор '=', получено '{token.lexeme}'"
-            )
-            # Поиск идентификатора (начало пути)
-            while self.pos < len(self.tokens):
-                t = self.tokens[self.pos]
-                if t.token_type == 'идентификатор':
-                    break
-                self.pos += 1
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидался оператор '=', получено '{token.lexeme}'")
+            # НЕ продвигаемся — может быть 'num'
         
-        # 4. Выражение E
-        self.parse_E()
+        # 4. Путь
+        self._parse_path()
         
-        # 5. Точка с запятой ';'
+        # 5. '('
         token = self._get_token()
         if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидался ';' (конец оператора)")
+            self._add_error("", 1, 1, "Ожидалась '('")
+            return
+        
+        if token.lexeme == '(':
+            self._next()
+        else:
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидалась '(', получено '{token.lexeme}'")
+            self._next()
+        
+        # 6. Первое число
+        self._parse_number()
+        
+        # 7. ','
+        token = self._get_token()
+        if token is None:
+            self._add_error("", 1, 1, "Ожидалась ','")
+            return
+        
+        if token.lexeme == ',':
+            self._next()
+        else:
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидалась ',', получено '{token.lexeme}'")
+            self._next()
+        
+        # 8. Второе число
+        self._parse_number()
+        
+        # 9. ')'
+        token = self._get_token()
+        if token is None:
+            self._add_error("", 1, 1, "Ожидалась ')'")
+            return
+        
+        if token.lexeme == ')':
+            self._next()
+        else:
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидалась ')', получено '{token.lexeme}'")
+            self._next()
+        
+        # 10. ';'
+        token = self._get_token()
+        if token is None:
+            self._add_error("", 1, 1, "Ожидался ';' (конец оператора)")
             return
         
         if token.lexeme == ';':
             self._next()
         else:
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидался ';', получено '{token.lexeme}'"
-            )
-        
-        # Проверка лишних токенов
-        token = self._get_token()
-        if token is not None:
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Неожиданный токен '{token.lexeme}' после конца выражения"
-            )
+            self._add_error(token.lexeme, token.line, token.start_pos,
+                           f"Ожидался ';', получено '{token.lexeme}'")
     
-    def parse_E(self):
-        """
-        E → PATH "::" "new" "(" ARGS ")"
-        """
-        # 1. Разбор пути PATH
-        self.parse_PATH()
+    def _parse_path(self):
+        expected = ['num', '::', 'complex', '::', 'Complex', '::', 'new']
+        error_occurred = False
         
-        # 2. '::'
+        for exp in expected:
+            token = self._get_token()
+            if token is None:
+                if not error_occurred:
+                    self._add_error("", 1, 1, f"Ожидался '{exp}'")
+                return
+            
+            if token.is_error:
+                # Специальная обработка для одиночного ':' когда ожидается '::'
+                # Если после ':' сразу идет '\\', считаем ошибкой '\\'
+                if exp == '::' and token.lexeme == ':':
+                    # Проверим следующий токен
+                    next_pos = self.pos + 1
+                    if next_pos < len(self.tokens) and self.tokens[next_pos].lexeme == '\\':
+                        # Ошибка в обратном слеше
+                        if not error_occurred:
+                            self._add_error('\\', self.tokens[next_pos].line, self.tokens[next_pos].start_pos,
+                                           f"Ожидалось '::', получилось '\\'")
+                            error_occurred = True
+                        # Пропускаем оба токена
+                        self._next()  # пропускаем ':'
+                        self._next()  # пропускаем '\\'
+                        continue
+                    else:
+                        if not error_occurred:
+                            self._add_error(token.lexeme, token.line, token.start_pos,
+                                           f"Ожидалось '::', получено ':'")
+                            error_occurred = True
+                elif exp == '::' and token.lexeme == '\\':
+                    if not error_occurred:
+                        self._add_error(token.lexeme, token.line, token.start_pos,
+                                       f"Ожидалось '::', получилось '\\'")
+                        error_occurred = True
+                else:
+                    if not error_occurred:
+                        self._add_error(token.lexeme, token.line, token.start_pos,
+                                       f"Недопустимый символ: '{token.lexeme}'")
+                        error_occurred = True
+                self._next()
+                continue
+            
+            if token.lexeme == exp:
+                self._next()
+            elif exp == '::' and token.lexeme == ':':
+                if not error_occurred:
+                    self._add_error(token.lexeme, token.line, token.start_pos,
+                                   f"Ожидалось '::', получено ':'")
+                    error_occurred = True
+                self._next()
+            else:
+                if not error_occurred:
+                    self._add_error(token.lexeme, token.line, token.start_pos,
+                                   f"Ожидался '{exp}', получено '{token.lexeme}'")
+                    error_occurred = True
+                self._next()
+    
+    def _parse_number(self):
         token = self._get_token()
         if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидался '::'")
-            return
+            self._add_error("", 1, 1, "Ожидалось число")
+            return False
         
-        if token.lexeme != '::':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидался '::', получено '{token.lexeme}'"
-            )
-            # Поиск "new" или "("
-            while self.pos < len(self.tokens):
-                t = self.tokens[self.pos]
-                if t.lexeme in {'new', '(', ';'}:
-                    break
-                self.pos += 1
-        else:
+        lex = token.lexeme
+        
+        # Целое число (лексер объединил)
+        if self._is_number_token(token):
             self._next()
+            return True
         
-        # 3. 'new'
-        token = self._get_token()
-        if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидалось ключевое слово 'new'")
-            return
-        
-        if token.lexeme != 'new':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидалось ключевое слово 'new', получено '{token.lexeme}'"
-            )
-            # Поиск '('
-            while self.pos < len(self.tokens):
-                t = self.tokens[self.pos]
-                if t.lexeme == '(':
-                    break
-                self.pos += 1
-        else:
+        # '-' (отрицательное число)
+        if lex == '-':
             self._next()
+            token = self._get_token()
+            if token is None:
+                self._add_error("", 1, 1, "Ожидалась цифра после '-'")
+                return False
+            lex = token.lexeme
+            
+            if self._is_digit(lex):
+                self._next()
+                self._read_digits()
+                return True
+            elif lex == '.':
+                self._add_error(lex, token.line, token.start_pos, "Ожидалась цифра после '-'")
+                self._next()
+                # Пропускаем до терминала
+                self._skip_to_terminal()
+                return False
+            else:
+                self._add_error(lex, token.line, token.start_pos, "Ожидалась цифра после '-'")
+                return False
         
-        # 4. '('
-        token = self._get_token()
-        if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидалась '('")
-            return
+        # Цифра
+        if self._is_digit(lex):
+            self._next()
+            self._read_digits()
+            return True
         
-        if token.lexeme != '(':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидалась '(', получено '{token.lexeme}'"
-            )
-            return
+        # Точка в начале числа (.1)
+        if lex == '.':
+            self._add_error(lex, token.line, token.start_pos, "Ожидалась цифра перед десятичной точкой")
+            self._next()
+            # Читаем цифры после точки как обычное число
+            token = self._get_token()
+            if token and self._is_digit(token.lexeme):
+                self._next()
+                self._read_digits()
+            return True  # Всё равно продолжаем разбор
+        
+        # Не число
+        self._add_error(lex, token.line, token.start_pos, f"Ожидалось число, получено '{lex}'")
         self._next()
-        
-        # 5. ARGS
-        self.parse_ARGS()
-        
-        # 6. ')'
-        token = self._get_token()
-        if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидалась ')'")
-            return
-        
-        if token.lexeme != ')':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидалась ')', получено '{token.lexeme}'"
-            )
-        else:
-            self._next()
+        return False
     
-    def parse_PATH(self):
-        """
-        PATH → ID ("::" ID)*
-        
-        Разбирает: num :: complex :: Complex
-        Останавливается ПЕРЕД ::new (оставляет :: для parse_E)
-        """
-        # Первый идентификатор
-        token = self._get_token()
-        if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидался идентификатор в пути")
-            return
-        
-        if token.token_type != 'идентификатор':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидался идентификатор в пути, получено '{token.lexeme}'"
-            )
-            return
-        
-        self._next()  # пропускаем первый ID
-        
-        # Цикл: "::" ID
+    def _skip_to_terminal(self):
+        """Пропустить токены до запятой, скобки или точки с запятой"""
         while True:
             token = self._get_token()
             if token is None:
-                break
-            
-            if token.lexeme != '::':
-                break
-            
-            # Смотрим токен ПОСЛЕ ::
-            next_token = self._peek_next()
-            
-            if next_token is None:
-                break
-            
-            # КЛЮЧЕВОЙ МОМЕНТ:
-            # Если после :: идёт 'new' — это НЕ часть пути!
-            # Это уже "::new" из правила E
-            if next_token.lexeme == 'new':
-                break
-            
-            # Если после :: идёт идентификатор — продолжаем путь
-            if next_token.token_type == 'идентификатор':
-                self._next()  # пропускаем ::
-                self._next()  # пропускаем ID
-            else:
-                break
+                return
+            if token.lexeme in {',', ')', ';'}:
+                return
+            self._next()
     
-    def parse_ARGS(self):
-        """
-        ARGS → NUM "," NUM
-        """
-        # Первое число
-        if not self._parse_num():
-            return
-        
-        # Запятая
-        token = self._get_token()
-        if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидалась ',' между аргументами")
-            return
-        
-        if token.lexeme != ',':
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидалась ',' между аргументами, получено '{token.lexeme}'"
-            )
-            return
-        
-        self._next()
-        
-        # Второе число
-        self._parse_num()
-    
-    def _parse_num(self):
-        """
-        NUM → ["-"] DIGITS ["." DIGITS]
-        """
-        token = self._get_token()
-        
-        if token is None:
-            line, pos = self._get_last_position()
-            self._add_error("", line, pos, "Ожидалось число")
-            return False
-        
-        if self._is_number_token(token):
+    def _read_digits(self):
+        while True:
+            token = self._get_token()
+            if token is None:
+                return
             lex = token.lexeme
             
-            # Проверка на точку без цифр спереди
-            if lex.startswith('.'):
-                self._add_error(
-                    lex, token.line, token.start_pos,
-                    "Ожидалась цифра перед десятичной точкой"
-                )
+            if self._is_digit(lex):
                 self._next()
-                return False
-            
-            # Проверка на множественные точки
-            if lex.count('.') > 1:
-                self._add_error(
-                    lex, token.line, token.start_pos,
-                    "Некорректное число: множественные точки"
-                )
+            elif lex == '.':
                 self._next()
-                return False
-            
-            self._next()
-            return True
-        else:
-            self._add_error(
-                token.lexeme, token.line, token.start_pos,
-                f"Ожидалось число, получено '{token.lexeme}'"
-            )
-            return False
+                token = self._get_token()
+                if token is None:
+                    return
+                if self._is_digit(token.lexeme):
+                    self._next()
+                else:
+                    # После точки НЕ цифра — ошибка
+                    self._add_error(token.lexeme, token.line, token.start_pos,
+                                   f"Ожидалась цифра, получено '{token.lexeme}'")
+                    # Пропускаем до терминального символа
+                    while True:
+                        token = self._get_token()
+                        if token is None:
+                            return
+                        if token.lexeme in {',', ')', ';'}:
+                            return
+                        self._next()
+            elif lex in {',', ')', ';'}:
+                return
+            else:
+                self._add_error(lex, token.line, token.start_pos,
+                               f"Ожидалась цифра, получено '{lex}'")
+                self._next()
+                return
